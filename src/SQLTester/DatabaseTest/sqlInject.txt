@@ -1,0 +1,11 @@
+create table bruker (
+  bruker char(10) primary key,    
+  passord char(10) not null);
+insert into bruker values('ole', 'abc');
+insert into bruker values('petter', 'def');
+insert into bruker values('kari', 'ghi');
+insert into bruker values('hanne', 'jkl');
+
+select * from bruker where bruker = '" + brukernavn + "' and passord = '" + passord + "'";
+select * from bruker where bruker = '' or '1'='1' and passord = '' or '1'='1';
+

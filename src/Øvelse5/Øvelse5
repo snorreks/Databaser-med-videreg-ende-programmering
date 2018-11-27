@@ -1,0 +1,61 @@
+DROP TABLE IF EXISTS andelseier;
+DROP TABLE IF EXISTS leilighet;
+DROP TABLE IF EXISTS bygning;
+DROP TABLE IF EXISTS borettslag;
+
+
+CREATE TABLE borettslag (
+  borettslag_id    INTEGER AUTO_INCREMENT,
+  adresse          INTEGER     NOT NULL,
+  borettslag_navn  VARCHAR(50) NOT NULL,
+  ant_hus          INTEGER,
+  ant_blokkenheter INTEGER,
+  etabl_aar        INTEGER(4)  NOT NULL,
+  PRIMARY KEY (borettslag_id)
+);
+
+CREATE TABLE bygning (
+  bygg_id         INTEGER AUTO_INCREMENT,
+  ant_leiligheter INTEGER     NOT NULL,
+  ant_etasjer     INTEGER     NOT NULL,
+  bygg_navn       VARCHAR(50) NOT NULL,
+  borettslag_id   INTEGER     NOT NULL,
+  PRIMARY KEY (bygg_id),
+  FOREIGN KEY (borettslag_id) REFERENCES borettslag (borettslag_id)
+    ON UPDATE CASCADE
+);
+
+CREATE TABLE andelseier (
+  eier_id   INTEGER AUTO_INCREMENT,
+  eier_navn VARCHAR(50) NOT NULL,
+  PRIMARY KEY (eier_id)
+);
+
+CREATE TABLE leilighet (
+  leilighet_id INTEGER AUTO_INCREMENT,
+  ant_rom      INTEGER NOT NULL,
+  size         INTEGER NOT NULL,
+  etasje       INTEGER NOT NULL,
+  bygg_id      INTEGER NOT NULL,
+  eier_id      INTEGER,
+  PRIMARY KEY (leilighet_id),
+  FOREIGN KEY (bygg_id) REFERENCES bygning (bygg_id)
+    ON UPDATE CASCADE,
+  FOREIGN KEY (eier_id) REFERENCES andelseier (eier_id)
+    ON UPDATE CASCADE
+);
+
+-- Eks:
+INSERT INTO borettslag (borettslag_id, adresse, borettslag_navn, ant_hus, ant_blokkenheter, etabl_aar)
+VALUES (DEFAULT, 2, "Borettslag", 5, 0, 1990);
+INSERT INTO bygning (bygg_id, ant_leiligheter, ant_etasjer, bygg_navn, borettslag_id)
+VALUES (DEFAULT, 3, 2, "Kule byggning", 1);
+INSERT INTO andelseier (eier_id, eier_navn)
+VALUES (DEFAULT, "Snorre Strand");
+INSERT INTO leilighet (leilighet_id, ant_rom, size, etasje, bygg_id, eier_id)
+VALUES (DEFAULT, 4, 50, 3, 1, 1);
+
+-- Gir brudd fordi foregin key eksisterer ikke:
+-- INSERT INTO borettslag(borettslag_id, adresse, borettslag_navn, ant_hus, ant_blokkenheter, etabl_aar) VALUES (DEFAULT ,2 ,"Borettslag",5,0,1990);
+-- INSERT INTO bygning(bygg_id, ant_leiligheter, ant_etasjer, bygg_navn, borettslag_id) VALUES (DEFAULT, 3,2,"Kule byggning", 4);
+-- INSERT INTO leilighet(leilighet_id, ant_rom, size, etasje, bygg_id, eier_id) VALUES (DEFAULT ,4 ,50,3,4,4);
